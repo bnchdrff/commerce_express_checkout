@@ -113,7 +113,7 @@ function commerce_express_checkout_create_order($product_id, $token) {
 
 function commerce_express_checkout_generate_links($form, &$form_state) {
 
-  $products = db_query("SELECT * FROM {commerce_product}");
+  $products = db_query("SELECT * FROM {commerce_product} WHERE status=1");
 
   $products_array = array();
 
