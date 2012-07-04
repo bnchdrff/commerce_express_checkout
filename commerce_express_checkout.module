@@ -11,7 +11,7 @@ function commerce_express_checkout_menu() {
   );
 
   $items['commerce-express-checkout/%/%'] = array(
-      'title' => 'Pay Invoice',
+      'title' => 'Express Checkout',
       'page callback' => 'commerce_express_checkout_create_order',
       'page arguments' => array(1, 2),
       'access arguments' => array('access checkout'),
@@ -83,8 +83,8 @@ function commerce_express_checkout_commerce_checkout_pane_info_alter(&$panes) {
 }
 
 function commerce_express_checkout_create_order($product_id, $token) {
-  if (drupal_valid_token($token, $product_id)) {
 
+  if (drupal_hmac_base64($product_id, drupal_get_private_key().drupal_get_hash_salt()) == $token) {
     global $user;
 
     $product = commerce_product_load($product_id);
@@ -104,7 +104,11 @@ function commerce_express_checkout_create_order($product_id, $token) {
     commerce_order_save($order);
 
     drupal_goto('checkout/' . $order->order_id);
+
+    return "";
   }
+
+   return "";
 }
 
 function commerce_express_checkout_generate_links($form, &$form_state) {
@@ -144,15 +148,14 @@ function commerce_express_checkout_generate_links($form, &$form_state) {
 }
 
 function commerce_express_checkout_generate_links_submit($form, &$form_state){
-
   $_SESSION["commerce_express_checkout_selected"] = $form_state['values']['products'];
   $_SESSION["commerce_express_checkout_link"] = commerce_express_checkout_generate_checkout_button_code($form_state['values']['products']);
 }
 
 function commerce_express_checkout_generate_checkout_button($product_id){
-  return '<span style="display: inline-block; padding: 10px; border: 1px solid #CCCCCC; border-radius: 20px; background-color: #EEEEEE;"><a href="'.url("commerce-express-checkout/".$product_id.'/'.drupal_get_token($product_id), array('absolute' => TRUE)).'" style="text-decoration: none; font-weight: bold; color: #666666">'.t('Express Checkout').'</a></span>';
+  return '<span style="display: inline-block; padding: 10px; border: 1px solid #CCCCCC; border-radius: 20px; background-color: #EEEEEE;"><a href="'.url("commerce-express-checkout/".$product_id.'/'.drupal_hmac_base64($product_id, drupal_get_private_key().drupal_get_hash_salt()), array('absolute' => TRUE)).'" style="text-decoration: none; font-weight: bold; color: #666666">'.t('Express Checkout').'</a></span>';
 }
 
 function commerce_express_checkout_generate_checkout_button_code($product_id){
-  return '<p>This is how it will look like, copy the code below and paste it anywhere on your site or on any external site you want to put a buy link on:<p>'.commerce_express_checkout_generate_checkout_button($product_id).'</p></p>'.'&ltspan style="display: inline-block; padding: 10px; border: 1px solid #CCCCCC; border-radius: 20px; background-color: #EEEEEE;"&gt&lta href="'.url("commerce-express-checkout/".$product_id.'/'.drupal_get_token($product_id), array('absolute' => TRUE)).'" style="text-decoration: none; font-weight: bold; color: #666666"&gt'.t('Express Checkout').'&lt/a&gt&lt/span&gt';
+  return '<p>This is how it will look like, copy the code below and paste it anywhere on your site or on any external site you want to put a buy link on:<p>'.commerce_express_checkout_generate_checkout_button($product_id).'</p></p>'.'&ltspan style="display: inline-block; padding: 10px; border: 1px solid #CCCCCC; border-radius: 20px; background-color: #EEEEEE;"&gt&lta href="'.url("commerce-express-checkout/".$product_id.'/'.drupal_hmac_base64($product_id, drupal_get_private_key().drupal_get_hash_salt()), array('absolute' => TRUE)).'" style="text-decoration: none; font-weight: bold; color: #666666"&gt'.t('Express Checkout').'&lt/a&gt&lt/span&gt';
 }
