@@ -91,6 +91,8 @@ function commerce_express_checkout_create_order($product_id, $token) {
 
     $order = ($user->uid) ? commerce_order_new($user->uid, 'checkout_checkout') : commerce_cart_order_new();
 
+    commerce_order_save($order);
+
     $line_item = commerce_product_line_item_new($product, 1, $order->order_id);
 
     commerce_line_item_save($line_item);
