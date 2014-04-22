@@ -223,7 +223,7 @@ function _commerce_express_checkout_generate_link($product_id, $custom_qty) {
     $qty_widget = '<input class="qty_ctl" id="qty_ctl_' . $product_id . '" type="text" size="2" value="" type="number" min="1" max="999" placeholder="Qty" />';
   }
   $path = 'commerce-express-checkout/' . $product_id . '/1/' . $token;
-  $link = l(t('Express Checkout'), $path, array('attributes' => array('class' => array('commerce_express_checkout')))) . $qty_widget;
+  $link = l(t('Express Checkout'), $path, array('attributes' => array('id' => array('commerce_express_checkout_' . $product_id), 'class' => array('commerce_express_checkout')))) . $qty_widget;
   return $link;
 }
 
