@@ -215,15 +215,36 @@ function _commerce_express_checkout_generate_token($product_id) {
  *   Add quantity changer thingie if true
  *
  * @return string
- *   HTML link
+ *   Themed output of link.
  */
 function _commerce_express_checkout_generate_link($product_id, $custom_qty) {
   $token = _commerce_express_checkout_generate_token($product_id);
-  if ($custom_qty) {
-    $qty_widget = '<input class="qty_ctl" id="qty_ctl_' . $product_id . '" type="text" size="2" value="" type="number" min="1" max="999" placeholder="Qty" />';
-  }
   $path = 'commerce-express-checkout/' . $product_id . '/1/' . $token;
-  $link = l(t('Express Checkout'), $path, array('attributes' => array('id' => array('commerce_express_checkout_' . $product_id), 'class' => array('commerce_express_checkout')))) . $qty_widget;
-  return $link;
+
+  $vars = array(
+    'link' => l(t('Express Checkout'), $path, array('attributes' => array('id' => array('commerce_express_checkout_' . $product_id), 'class' => array('commerce_express_checkout')))),
+    'product_id' => $product_id,
+    'path' => $path,
+    'custom_qty' => $custom_qty,
+  );
+
+  return theme('commerce_express_checkout', $vars);
+}
+
+/**
+ * Implements hook_theme()
+ */
+function commerce_express_checkout_theme($existing, $type, $theme, $path) {
+  return array(
+    'commerce_express_checkout' => array(
+      'variables' => array(
+        'link' => NULL,
+        'product_id' => NULL,
+        'path' => NULL,
+        'custom_qty' => NULL,
+      ),
+      'template' => 'commerce_express_checkout',
+    ),
+  );
 }
 
