@@ -127,7 +127,7 @@ function commerce_express_checkout_commerce_checkout_pane_info_alter(&$panes) {
  */
 function commerce_express_checkout_create_order($product_id, $qty, $token) {
 
-  if (drupal_hmac_base64($product_id, drupal_get_private_key().drupal_get_hash_salt()) == $token) {
+  if (_commerce_express_checkout_generate_token($product_id) == $token) {
     global $user;
 
     $product = commerce_product_load($product_id);
