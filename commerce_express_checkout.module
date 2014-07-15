@@ -105,7 +105,10 @@ function commerce_express_checkout_field_formatter_view($entity_type, $entity, $
 
   // Add custom qty js, maybe
   if ($custom_qty) {
-    $result['#attached']['js'][] = drupal_get_path('module', 'commerce_express_checkout') . '/commerce_express_checkout.custom_qty.js';
+    // allow override
+    $path_to_cec_js = drupal_get_path('module', 'commerce_express_checkout') . '/commerce_express_checkout.custom_qty.js';
+    drupal_alter('commerce_express_checkout_path_to_js', $path_to_cec_js);
+    $result['#attached']['js'][] = $path_to_cec_js;
   }
 
   return $result;
