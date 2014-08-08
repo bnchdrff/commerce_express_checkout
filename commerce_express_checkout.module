@@ -151,6 +151,11 @@ function commerce_express_checkout_create_order($product_id, $qty, $token) {
 
     commerce_order_save($order);
 
+    $context = array(
+      'service_name' => 'standard_global_shipping'
+    );
+    drupal_alter('commerce_express_checkout_pre_redirect', $order, $context);
+
     drupal_goto('checkout/' . $order->order_id);
 
     return "";
