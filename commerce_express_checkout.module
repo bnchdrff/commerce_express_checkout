@@ -33,6 +33,7 @@ function commerce_express_checkout_field_formatter_info() {
       'field types' => array('commerce_product_reference'),
       'settings' => array(
         'custom_qty' => FALSE,
+        'caption_txt' => 'Delivered for just $<span class="qty_delivered">12.95</span>',
       ),
     ),
   );
@@ -50,7 +51,14 @@ function commerce_express_checkout_field_formatter_settings_form($field, $instan
     '#type' => 'checkbox',
     '#title' => t('Allow custom quantity?'),
     '#description' => t('If checked, express checkout button will have a quantity input box.'),
-    '#default_value' => FALSE,
+    '#default_value' => $settings['custom_qty'],
+  );
+
+  $element['caption_txt'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Caption text'),
+    '#maxlength' => 128,
+    '#default_value' => $settings['caption_txt'],
   );
 
   return $element;
@@ -75,6 +83,7 @@ function commerce_express_checkout_field_formatter_view($entity_type, $entity, $
   $result = array();
 
   $custom_qty = $display['settings']['custom_qty'];
+  $caption_txt = $display['settings']['caption_txt'];
 
   // Collect the list of product IDs.
   $product_ids = array();
@@ -96,7 +105,7 @@ function commerce_express_checkout_field_formatter_view($entity_type, $entity, $
       foreach ($items as $delta => $item) {
         if (!empty($item['product_id'])) {
             $result[$delta] = array(
-              '#markup' => _commerce_express_checkout_generate_link($item['product_id'], $custom_qty),
+              '#markup' => _commerce_express_checkout_generate_link($item['product_id'], $custom_qty, $caption_txt),
             );
         }
       }
@@ -222,10 +231,13 @@ function _commerce_express_checkout_generate_token($product_id) {
  * @param bool $custom_qty
  *   Add quantity changer thingie if true
  *
+ * @param string $caption_txt
+ *   Caption text
+ *
  * @return string
  *   Themed output of link.
  */
-function _commerce_express_checkout_generate_link($product_id, $custom_qty) {
+function _commerce_express_checkout_generate_link($product_id, $custom_qty, $caption_txt) {
   $token = _commerce_express_checkout_generate_token($product_id);
   $path = 'commerce-express-checkout/' . $product_id . '/1/' . $token;
 
@@ -234,6 +246,7 @@ function _commerce_express_checkout_generate_link($product_id, $custom_qty) {
     'product_id' => $product_id,
     'path' => $path,
     'custom_qty' => $custom_qty,
+    'caption_txt' => $caption_txt,
   );
 
   return theme('commerce_express_checkout', $vars);
