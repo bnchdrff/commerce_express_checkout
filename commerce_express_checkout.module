@@ -57,7 +57,7 @@ function commerce_express_checkout_field_formatter_settings_form($field, $instan
   $element['caption_txt'] = array(
     '#type' => 'textfield',
     '#title' => t('Caption text'),
-    '#maxlength' => 128,
+    '#maxlength' => 256,
     '#default_value' => $settings['caption_txt'],
   );
 
